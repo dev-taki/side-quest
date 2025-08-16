@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-family-young-serif: var(--font-young-serif);
+  --color-primary-50: #f8f7ff;
+  --color-primary-100: #f0edff;
+  --color-primary-200: #e4ddff;
+  --color-primary-300: #d3c4ff;
+  --color-primary-400: #bda0ff;
+  --color-primary-500: #8c52ff;
+  --color-primary-600: #7c42ef;
+  --color-primary-700: #6b32df;
+  --color-primary-800: #5a22cf;
+  --color-primary-900: #4912bf;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.young-serif-regular {
+  font-family: var(--font-young-serif);
+  font-weight: 400;
+  font-style: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8c52ff;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7c42ef;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Global font family */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-young-serif);
+}
+
+/* Mobile touch improvements */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Focus styles for accessibility */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid #8c52ff;
+  outline-offset: 2px;
+}
+
+/* Prevent text selection on buttons */
+button {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
