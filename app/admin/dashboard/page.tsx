@@ -74,7 +74,7 @@ export default function AdminDashboardPage() {
                 <div className="p-3 bg-blue-100 rounded-lg mb-3">
                   <Users className="h-6 w-6 text-blue-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Manage Patients</span>
+                <span className="text-sm font-medium text-gray-700">Manage Members</span>
               </div>
             </button>
 
@@ -86,16 +86,7 @@ export default function AdminDashboardPage() {
                 <div className="p-3 bg-green-100 rounded-lg mb-3">
                   <Calendar className="h-6 w-6 text-green-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Appointment Links</span>
-              </div>
-            </button>
-
-            <button className="bg-white rounded-xl shadow-sm p-4 border border-gray-200 hover:shadow-md transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="p-3 bg-purple-100 rounded-lg mb-3">
-                  <BarChart3 className="h-6 w-6 text-purple-600" />
-                </div>
-                <span className="text-sm font-medium text-gray-700">View Treatments</span>
+                <span className="text-sm font-medium text-gray-700">Appointment Management</span>
               </div>
             </button>
 
@@ -122,66 +113,6 @@ export default function AdminDashboardPage() {
                 <span className="text-sm font-medium text-gray-700">Items Management</span>
               </div>
             </button>
-
-            <button className="bg-white rounded-xl shadow-sm p-4 border border-gray-200 hover:shadow-md transition-shadow">
-              <div className="flex flex-col items-center text-center">
-                <div className="p-3 bg-gray-100 rounded-lg mb-3">
-                  <Settings className="h-6 w-6 text-gray-600" />
-                </div>
-                <span className="text-sm font-medium text-gray-700">System Settings</span>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Users className="h-5 w-5 text-purple-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-gray-600">Total Patients</p>
-                <p className="text-lg font-bold text-gray-900">1,234</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Calendar className="h-5 w-5 text-green-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-gray-600">Today's Appointments</p>
-                <p className="text-lg font-bold text-gray-900">12</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <BarChart3 className="h-5 w-5 text-blue-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-gray-600">Active Treatments</p>
-                <p className="text-lg font-bold text-gray-900">8</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <DollarSign className="h-5 w-5 text-yellow-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-gray-600">Monthly Revenue</p>
-                <p className="text-lg font-bold text-gray-900">$45,678</p>
-              </div>
-            </div>
           </div>
         </div>
       </main>

@@ -19,7 +19,9 @@ export default function PlansManagementPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [showPlanForm, setShowPlanForm] = useState(false);
   const [showVariationForm, setShowVariationForm] = useState(false);
+  const [showEditVariationForm, setShowEditVariationForm] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
+  const [selectedVariation, setSelectedVariation] = useState<PlanVariation | null>(null);
   const [planFormData, setPlanFormData] = useState({
     plan_name: '',
     plan_display_name: '',
@@ -31,6 +33,10 @@ export default function PlansManagementPage() {
     variation_display_name: '',
     billing_frequency: 'WEEKLY',
     price_amount: '',
+    plan_variation_description: ''
+  });
+  const [editVariationFormData, setEditVariationFormData] = useState({
+    status: '',
     plan_variation_description: ''
   });
   const [submitting, setSubmitting] = useState(false);
@@ -103,6 +109,16 @@ export default function PlansManagementPage() {
     setError('');
   };
 
+  const handleEditVariation = (variation: PlanVariation) => {
+    setSelectedVariation(variation);
+    setEditVariationFormData({
+      status: variation.status,
+      plan_variation_description: variation.plan_variation_description || ''
+    });
+    setShowEditVariationForm(true);
+    setError('');
+  };
+
   const handlePlanSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -149,6 +165,46 @@ export default function PlansManagementPage() {
       setSelectedPlan(null);
     } catch (error: any) {
       setError(error.message || 'Failed to create variation');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleEditVariationSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const updateData = {
+        business_id: BUSINESS_ID,
+        plan_id: selectedVariation!.plan_id,
+        status: editVariationFormData.status,
+        plan_variation_description: editVariationFormData.plan_variation_description
+      };
+
+      const response = await fetch(
+        'https://xwqm-zvzg-uzfr.n7e.xano.io/api:X2pOe3_k/subscription/square/subscription-plan-variation',
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${AdminAuthService.getAuthToken()}`,
+          },
+          body: JSON.stringify(updateData),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update variation');
+      }
+
+      await loadData();
+      setShowEditVariationForm(false);
+      setSelectedVariation(null);
+    } catch (error: any) {
+      setError(error.message || 'Failed to update variation');
     } finally {
       setSubmitting(false);
     }
@@ -244,11 +300,26 @@ export default function PlansManagementPage() {
                 {getVariationsForPlan(plan.id).map((variation) => (
                   <div key={variation.id} className="bg-gray-50 rounded-lg p-3">
                     <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h4 className="font-medium text-gray-900">{variation.variation_display_name}</h4>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="font-medium text-gray-900">{variation.variation_display_name}</h4>
+                          <button
+                            onClick={() => handleEditVariation(variation)}
+                            className="p-1 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                        </div>
                         <p className="text-sm text-gray-600">{variation.variation_name}</p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            variation.status === 'active' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
+                          }`}>
+                            {variation.status}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right ml-4">
                         <div className="flex items-center text-green-600 font-semibold">
                           <DollarSign className="h-4 w-4 mr-1" />
                           {centsToDollars(variation.price_amount).toFixed(2)}
@@ -525,6 +596,92 @@ export default function PlansManagementPage() {
                       <>
                         <Save className="h-5 w-5 mr-2" />
                         Create Variation
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Variation Form Modal */}
+      {showEditVariationForm && selectedVariation && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-gray-900">Edit Variation</h2>
+                <button
+                  onClick={() => setShowEditVariationForm(false)}
+                  className="p-2 text-gray-600 hover:text-gray-900"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleEditVariationSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Variation Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedVariation.variation_display_name}
+                    disabled
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Status *
+                  </label>
+                  <select
+                    value={editVariationFormData.status}
+                    onChange={(e) => setEditVariationFormData({...editVariationFormData, status: e.target.value})}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
+                  <RichTextEditor
+                    value={editVariationFormData.plan_variation_description}
+                    onChange={(html) => setEditVariationFormData({...editVariationFormData, plan_variation_description: html})}
+                    placeholder="Enter variation description..."
+                  />
+                </div>
+
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditVariationForm(false)}
+                    className="flex-1 border border-gray-300 text-gray-700 py-3 px-4 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="flex-1 bg-purple-600 text-white py-3 px-4 rounded-xl font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  >
+                    {submitting ? (
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-5 w-5 mr-2" />
+                        Update Variation
                       </>
                     )}
                   </button>
