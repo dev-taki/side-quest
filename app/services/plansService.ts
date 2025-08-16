@@ -1,6 +1,7 @@
 const API_BASE_URL = 'https://xwqm-zvzg-uzfr.n7e.xano.io/api:X2pOe3_k';
+// https://xwqm-zvzg-uzfr.n7e.xano.io/api:X2pOe3_k/subscription/square/subscription-plan-variation
 
-import { AdminAuthService } from './adminAuthService';
+import { AuthService } from './authService';
 
 export interface SubscriptionPlan {
   id: number;
@@ -67,7 +68,7 @@ export class PlansService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${AdminAuthService.getAuthToken()}`,
+        'Authorization': `Bearer ${AuthService.getAuthToken()}`,
       },
     });
 
@@ -88,7 +89,7 @@ export class PlansService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${AdminAuthService.getAuthToken()}`,
+        'Authorization': `Bearer ${AuthService.getAuthToken()}`,
       },
     });
 
@@ -109,7 +110,7 @@ export class PlansService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${AdminAuthService.getAuthToken()}`,
+        'Authorization': `Bearer ${AuthService.getAuthToken()}`,
       },
       body: JSON.stringify(data),
     });
@@ -131,7 +132,7 @@ export class PlansService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${AdminAuthService.getAuthToken()}`,
+        'Authorization': `Bearer ${AuthService.getAuthToken()}`,
       },
       body: JSON.stringify(data),
     });

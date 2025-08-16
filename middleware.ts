@@ -17,10 +17,8 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect authenticated users away from auth pages
-  if (authToken && pathname === '/') {
-    return NextResponse.redirect(new URL('/home', request.url));
-  }
+  // Allow authenticated users to stay on any page they want
+  // No automatic redirects
 
   return NextResponse.next();
 }

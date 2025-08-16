@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Home, Calendar, User, Clock } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setActiveTab } from '../store/slices/navigationSlice';
@@ -14,6 +14,7 @@ interface AuthenticatedLayoutProps {
 export default function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated, loading, user } = useAppSelector((state) => state.auth);
   const { activeTab } = useAppSelector((state) => state.navigation);
 
@@ -26,6 +27,19 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
       dispatch(fetchUserProfile());
     }
   }, [isAuthenticated, user, dispatch]);
+
+  // Set active tab based on current pathname
+  useEffect(() => {
+    if (pathname === '/home' || pathname === '/') {
+      dispatch(setActiveTab('home'));
+    } else if (pathname === '/plans') {
+      dispatch(setActiveTab('plans'));
+    } else if (pathname === '/schedule') {
+      dispatch(setActiveTab('schedule'));
+    } else if (pathname === '/profile') {
+      dispatch(setActiveTab('profile'));
+    }
+  }, [pathname, dispatch]);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -47,7 +61,8 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
 
   const handleTabChange = (tab: 'home' | 'plans' | 'schedule' | 'profile') => {
     dispatch(setActiveTab(tab));
-    router.push(`/${tab === 'home' ? '' : tab}`);
+    const path = tab === 'home' ? '/home' : `/${tab}`;
+    router.push(path);
   };
 
   return (

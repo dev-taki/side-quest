@@ -89,6 +89,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
       </body>
     </html>
   );

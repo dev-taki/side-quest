@@ -78,12 +78,15 @@ export default function AdminDashboardPage() {
               </div>
             </button>
 
-            <button className="bg-white rounded-xl shadow-sm p-4 border border-gray-200 hover:shadow-md transition-shadow">
+            <button 
+              onClick={() => router.push('/admin/appointment-links')}
+              className="bg-white rounded-xl shadow-sm p-4 border border-gray-200 hover:shadow-md transition-shadow"
+            >
               <div className="flex flex-col items-center text-center">
                 <div className="p-3 bg-green-100 rounded-lg mb-3">
                   <Calendar className="h-6 w-6 text-green-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Schedule Appointment</span>
+                <span className="text-sm font-medium text-gray-700">Appointment Links</span>
               </div>
             </button>
 

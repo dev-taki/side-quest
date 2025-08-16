@@ -7,6 +7,7 @@ import { AdminAuthService } from '../../services/adminAuthService';
 import { PlansService, SubscriptionPlan, PlanVariation, CreatePlanData, CreateVariationData, dollarsToCents, centsToDollars } from '../../services/plansService';
 import { ItemsService, Item } from '../../services/itemsService';
 import AdminBottomNav from '../../components/AdminBottomNav';
+import RichTextEditor from '../../components/RichTextEditor';
 
 const BUSINESS_ID = 'a16c462c-e0e8-45f9-81d4-a344874fc46c';
 
@@ -495,12 +496,10 @@ export default function PlansManagementPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Description
                   </label>
-                  <textarea
+                  <RichTextEditor
                     value={variationFormData.plan_variation_description}
-                    onChange={(e) => setVariationFormData({...variationFormData, plan_variation_description: e.target.value})}
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Enter variation description"
+                    onChange={(html) => setVariationFormData({...variationFormData, plan_variation_description: html})}
+                    placeholder="Enter variation description..."
                   />
                 </div>
 
