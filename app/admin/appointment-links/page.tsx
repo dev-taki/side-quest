@@ -42,7 +42,7 @@ export default function AppointmentLinksPage() {
         }
 
         await fetchAppointmentLinks();
-      } catch (error) {
+      } catch {
         AdminAuthService.removeAuthToken();
         router.push('/admin/login');
         return;
@@ -200,7 +200,7 @@ export default function AppointmentLinksPage() {
                 required
               />
               <p className="text-xs text-gray-500 mt-1">
-                Example: &lt;script src="https://embed.ycb.me" async="true" data-domain="sidequest-members" data-type="text-link" data-displaymode="auto"&gt;&lt;/script&gt;
+                Example: &lt;script src=&quot;https://embed.ycb.me&quot; async=&quot;true&quot; data-domain=&quot;sidequest-members&quot; data-type=&quot;text-link&quot; data-displaymode=&quot;auto&quot;&gt;&lt;/script&gt;
               </p>
             </div>
 

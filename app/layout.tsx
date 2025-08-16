@@ -89,7 +89,7 @@ export default function RootLayout({
             `,
           }}
         />
-        <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+        <script src="https://sandbox.web.squarecdn.com/v1/square.js" async></script>
       </body>
     </html>
   );

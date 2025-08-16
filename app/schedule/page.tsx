@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Calendar, Clock, ExternalLink } from 'lucide-react';
+import { Calendar, Clock } from 'lucide-react';
 import AuthenticatedLayout from '../components/AuthenticatedLayout';
 import { AuthService } from '../services/authService';
 
@@ -22,7 +21,6 @@ interface AppointmentLink {
 }
 
 export default function SchedulePage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [appointmentLinks, setAppointmentLinks] = useState<AppointmentLink[]>([]);
   const [error, setError] = useState<string | null>(null);
