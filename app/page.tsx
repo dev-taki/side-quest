@@ -5,6 +5,7 @@ import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AuthForm from './components/AuthForm';
+import PWAInstall from './components/PWAInstall';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { login, clearError, checkAuthStatus } from './store/slices/authSlice';
 import { LoginData } from './services/authService';
@@ -61,6 +62,7 @@ export default function Home() {
           </p>
         </div>
       </div>
+      <PWAInstall showOnAuth={true} />
     </div>
   );
 }

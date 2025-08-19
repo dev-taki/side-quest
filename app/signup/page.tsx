@@ -5,6 +5,7 @@ import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AuthForm from '../components/AuthForm';
+import PWAInstall from '../components/PWAInstall';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { signup, clearError, checkAuthStatus } from '../store/slices/authSlice';
 import { SignupData } from '../services/authService';
@@ -66,12 +67,13 @@ export default function SignupPage() {
         <div className="mt-8 text-center">
           <p className="text-gray-600 text-sm">
             Already have an account?{' '}
-            <Link href="/" className="text-purple-600 hover:text-purple-700 font-medium transition-colors">
+            <Link href="/" className="text-purple-700 font-medium transition-colors">
               Sign in here
             </Link>
           </p>
         </div>
       </div>
+      <PWAInstall showOnAuth={true} />
     </div>
   );
 }

@@ -8,11 +8,33 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
-export default function PWAInstall() {
+interface PWAInstallProps {
+  showOnAuth?: boolean; // Show during authentication flows
+  showAfterAuth?: boolean; // Show after successful authentication
+}
+
+// Utility function to clear PWA dismiss flag (can be called externally)
+export const clearPWADismissFlag = (): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('pwa-install-dismissed');
+  }
+};
+
+export default function PWAInstall({ showOnAuth = false, showAfterAuth = false }: PWAInstallProps) {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
+    // Check if user has dismissed the prompt before
+    const hasDismissed = localStorage.getItem('pwa-install-dismissed');
+    
+    // Show if:
+    // 1. We're in auth flow and user hasn't dismissed before, OR
+    // 2. We're showing after auth and user hasn't dismissed before
+    if ((!showOnAuth && !showAfterAuth) || hasDismissed === 'true') {
+      return;
+    }
+
     const handler = (e: BeforeInstallPromptEvent) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -24,7 +46,7 @@ export default function PWAInstall() {
     return () => {
       window.removeEventListener('beforeinstallprompt', handler as EventListener);
     };
-  }, []);
+  }, [showOnAuth, showAfterAuth]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -43,6 +65,8 @@ export default function PWAInstall() {
   };
 
   const handleDismiss = () => {
+    // Store the dismiss flag in localStorage
+    localStorage.setItem('pwa-install-dismissed', 'true');
     setShowInstallPrompt(false);
     setDeferredPrompt(null);
   };

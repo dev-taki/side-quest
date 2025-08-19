@@ -6,6 +6,7 @@ import { ChevronLeft, Plus, Edit, DollarSign, Package, Loader2, X, Save } from '
 import { AdminAuthService } from '../../services/adminAuthService';
 import { ItemsService, Item, CreateItemData, UpdateItemData, dollarsToCents, centsToDollars } from '../../services/itemsService';
 import AdminBottomNav from '../../components/AdminBottomNav';
+import PWAInstall from '../../components/PWAInstall';
 
 const BUSINESS_ID = 'a16c462c-e0e8-45f9-81d4-a344874fc46c';
 
@@ -355,6 +356,7 @@ export default function ItemsManagementPage() {
 
       {/* Bottom Navigation */}
       <AdminBottomNav />
+      <PWAInstall showAfterAuth={true} />
     </div>
   );
 }

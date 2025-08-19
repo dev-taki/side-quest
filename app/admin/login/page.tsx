@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { AdminAuthService } from '../../services/adminAuthService';
+import PWAInstall from '../../components/PWAInstall';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -141,6 +142,7 @@ export default function AdminLoginPage() {
           </p>
         </div>
       </div>
+      <PWAInstall showOnAuth={true} />
     </div>
   );
 }

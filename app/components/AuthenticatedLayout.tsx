@@ -6,6 +6,7 @@ import { Home, Calendar, User, Clock } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setActiveTab } from '../store/slices/navigationSlice';
 import { checkAuthStatus, fetchUserProfile } from '../store/slices/authSlice';
+import PWAInstall from './PWAInstall';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -116,6 +117,7 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPro
           </button>
         </div>
       </div>
+      <PWAInstall showAfterAuth={true} />
     </div>
   );
 }

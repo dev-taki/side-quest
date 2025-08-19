@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Young_Serif } from "next/font/google";
 import "./globals.css";
-import PWAInstall from "./components/PWAInstall";
 import { Providers } from "./providers";
+import { clearPWADismissFlag } from "./components/PWAInstall";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -71,10 +71,14 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
-        <PWAInstall />
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // Clear PWA dismiss flag on app start
+              if (typeof window !== 'undefined') {
+                localStorage.removeItem('pwa-install-dismissed');
+              }
+              
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
                   navigator.serviceWorker.register('/sw.js')

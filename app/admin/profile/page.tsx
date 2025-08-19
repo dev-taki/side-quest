@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, User, Mail, Shield, LogOut, Calendar, Settings } from 'lucide-react';
 import { AdminAuthService } from '../../services/adminAuthService';
 import AdminBottomNav from '../../components/AdminBottomNav';
+import PWAInstall from '../../components/PWAInstall';
 
 export default function AdminProfilePage() {
   const router = useRouter();
@@ -161,6 +162,7 @@ export default function AdminProfilePage() {
 
       {/* Bottom Navigation */}
       <AdminBottomNav />
+      <PWAInstall showAfterAuth={true} />
     </div>
   );
 }

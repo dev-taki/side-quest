@@ -80,6 +80,10 @@ export class AuthService {
 
   static setAuthToken(token: string): void {
     setCookie('side-quest', token, 7); // Store for 7 days
+    // Clear PWA install dismiss flag on successful authentication
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('pwa-install-dismissed');
+    }
   }
 
   static getAuthToken(): string | null {
