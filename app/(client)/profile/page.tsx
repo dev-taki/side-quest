@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Settings, LogOut, CreditCard, Calendar, Gift, Home } from 'lucide-react';
+import { User, Settings, LogOut, CreditCard, Calendar, Gift, Home, Clock } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchUserProfile, logout } from '../../store/slices/authSlice';
 import { CardLoader } from '../../components/common/Loader';
@@ -188,6 +188,14 @@ export default function ClientProfilePage() {
           >
             <Calendar className="h-6 w-6 text-gray-400" />
             <span className="text-xs font-medium">Plans</span>
+          </button>
+
+          <button
+            onClick={() => router.push('/schedule')}
+            className="flex flex-col items-center space-y-1 text-gray-400"
+          >
+            <Clock className="h-6 w-6 text-gray-400" />
+            <span className="text-xs font-medium">Schedule</span>
           </button>
 
           <button

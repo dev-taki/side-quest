@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Plus, Calendar, CreditCard, Users, Home, Gift, User } from 'lucide-react';
+import { Plus, Calendar, CreditCard, Users, Home, Gift, User, Clock } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { useRouter } from 'next/navigation';
 import { fetchUserSubscriptions } from '../../store/slices/subscriptionSlice';
@@ -150,6 +150,14 @@ export default function HomePage() {
           >
             <Calendar className="h-6 w-6 text-gray-400" />
             <span className="text-xs font-medium">Plans</span>
+          </button>
+
+          <button
+            onClick={() => router.push('/schedule')}
+            className="flex flex-col items-center space-y-1 text-gray-400"
+          >
+            <Clock className="h-6 w-6 text-gray-400" />
+            <span className="text-xs font-medium">Schedule</span>
           </button>
 
           <button

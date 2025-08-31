@@ -36,7 +36,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Protect client routes that require authentication
-  if (pathname.startsWith('/redeem') || pathname === '/profile' || pathname === '/plans' || pathname === '/home') {
+  if (pathname.startsWith('/redeem') || pathname === '/profile' || pathname === '/plans' || pathname === '/home' || pathname === '/schedule') {
     if (!authToken) {
       return NextResponse.redirect(new URL('/login', request.url));
     }

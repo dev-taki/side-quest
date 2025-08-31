@@ -413,6 +413,14 @@ export default function RedeemPage() {
           </button>
 
           <button
+            onClick={() => router.push('/schedule')}
+            className="flex flex-col items-center space-y-1 text-gray-400"
+          >
+            <Clock className="h-6 w-6 text-gray-400" />
+            <span className="text-xs font-medium">Schedule</span>
+          </button>
+
+          <button
             onClick={() => router.push('/redeem')}
             className="flex flex-col items-center space-y-1 text-[#8c52ff]"
           >

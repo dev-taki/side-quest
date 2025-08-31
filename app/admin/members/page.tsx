@@ -355,18 +355,18 @@ export default function MembersManagementPage() {
   const { userSubscriptions, loading: subscriptionsLoading, error: adminError } = useAppSelector((state) => state.admin);
 
   useEffect(() => {
-    if (!AdminAuthService.isAuthenticated()) {
-      router.push('/login');
-      return;
-    }
+      if (!AdminAuthService.isAuthenticated()) {
+        router.push('/login');
+        return;
+      }
 
     if (!AdminAuthService.hasAdminRole()) {
-      AdminAuthService.removeAuthToken();
-      router.push('/login');
-      return;
-    }
+          AdminAuthService.removeAuthToken();
+          router.push('/login');
+          return;
+        }
 
-    dispatch(fetchAllUserSubscriptions());
+        dispatch(fetchAllUserSubscriptions());
     setLoading(false);
   }, [router, dispatch]);
 
