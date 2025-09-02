@@ -6,15 +6,18 @@ export interface RedeemItem {
   created_at: number;
   business_id: string;
   charged_credit: number;
+  gift_charge_credit: number;
   order_id: string;
   user_id: string;
   plan_variation_name: string;
   info_one?: string;
   info_two?: string;
+  info_three?: string;
 }
 
 export interface AddRedeemData {
   business_id: string;
+  button_number: number;
   info_one?: string;
   info_two?: string;
 }
@@ -24,11 +27,13 @@ export interface RedeemResponse {
   created_at: number;
   business_id: string;
   charged_credit: number;
+  gift_charge_credit: number;
   order_id: string;
   user_id: string;
   plan_variation_name: string;
   info_one?: string;
   info_two?: string;
+  info_three?: string;
 }
 
 export class RedeemService {

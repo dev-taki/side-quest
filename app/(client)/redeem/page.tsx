@@ -29,6 +29,8 @@ export default function RedeemPage() {
     info_one: '',
     info_two: ''
   });
+  const [redeemType, setRedeemType] = useState<'normal' | 'guest' | null>(null);
+  const [updatingCredits, setUpdatingCredits] = useState(false);
 
   const observer = useRef<IntersectionObserver | undefined>(undefined);
   const lastRedeemElementRef = useCallback((node: HTMLDivElement) => {
@@ -96,12 +98,21 @@ export default function RedeemPage() {
     return userSubscriptions.reduce((total, sub) => total + sub.available_credit, 0);
   };
 
+  const getTotalGiftCredits = () => {
+    return userSubscriptions.reduce((total, sub) => total + sub.gift_credit, 0);
+  };
+
   const canRedeem = () => {
-    return getTotalCredits() > 0;
+    return getTotalCredits() > 0 || getTotalGiftCredits() > 0;
   };
 
   const handleAddRedeem = async () => {
     
+    if (!redeemType) {
+      showToast.error('Please select a redeem type');
+      return;
+    }
+
     if (!canRedeem()) {
       showToast.error('You need credits to create a redeem request');
       return;
@@ -112,6 +123,7 @@ export default function RedeemPage() {
     try {
       const redeemData: AddRedeemData = {
         business_id: BUSINESS_ID,
+        button_number: redeemType === 'normal' ? 1 : 2,
         info_one: formData.info_one,
         info_two: formData.info_two
       };
@@ -125,12 +137,20 @@ export default function RedeemPage() {
         info_one: '',
         info_two: ''
       });
+      setRedeemType(null);
       setShowAddForm(false);
-      await fetchRedeemItems(); // Refresh the list
+      
+      // Refresh both redeem items and subscription data to update credit balances
+      setUpdatingCredits(true);
+      await Promise.all([
+        fetchRedeemItems(),
+        dispatch(fetchUserSubscriptions(BUSINESS_ID))
+      ]);
     } catch (error: any) {
       showToast.error(error.message || 'Failed to add redeem item');
     } finally {
       setSubmitting(false);
+      setUpdatingCredits(false);
     }
   };
 
@@ -179,19 +199,43 @@ export default function RedeemPage() {
         </div>
 
         {/* Credit Balance Display */}
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-[#8c52ff] rounded-lg flex items-center justify-center">
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-[#8c52ff] rounded-lg flex items-center justify-center">
                 <Gift className="h-5 w-5 text-white" />
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900">Available Credits</h3>
-                <p className="text-sm text-gray-600">Total credits for redemption</p>
+                <p className="text-sm text-gray-600">Subscriber credits</p>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-[#3B3B3B]">{getTotalCredits()}</div>
+            <div className="text-center">
+              {updatingCredits ? (
+                <div className="text-2xl font-bold text-[#3B3B3B] animate-pulse">...</div>
+              ) : (
+                <div className="text-2xl font-bold text-[#3B3B3B]">{getTotalCredits()}</div>
+              )}
+              <div className="text-xs text-gray-500">credits</div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                <Gift className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Gift Credits</h3>
+                <p className="text-sm text-gray-600">Guest credits</p>
+              </div>
+            </div>
+            <div className="text-center">
+              {updatingCredits ? (
+                <div className="text-2xl font-bold text-green-600 animate-pulse">...</div>
+              ) : (
+                <div className="text-2xl font-bold text-green-600">{getTotalGiftCredits()}</div>
+              )}
               <div className="text-xs text-gray-500">credits</div>
             </div>
           </div>
@@ -257,9 +301,19 @@ export default function RedeemPage() {
                   </div>
 
                   {/* Credits */}
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Clock className="h-4 w-4 mr-2" />
-                    <span>Credits: {item.charged_credit}</span>
+                  <div className="space-y-2">
+                    {item.charged_credit > 0 && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Clock className="h-4 w-4 mr-2" />
+                        <span>Subscriber Credits: {item.charged_credit}</span>
+                      </div>
+                    )}
+                    {item.gift_charge_credit > 0 && (
+                      <div className="flex items-center text-sm text-green-600">
+                        <Gift className="h-4 w-4 mr-2" />
+                        <span>Gift Credits: {item.gift_charge_credit}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Plan Variation */}
@@ -270,7 +324,7 @@ export default function RedeemPage() {
                 </div>
 
                 {/* Delivery Information */}
-                {(item.info_one || item.info_two) && (
+                {(item.info_one || item.info_two || item.info_three) && (
                   <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
                     {item.info_one && (
                       <div className="space-y-1">
@@ -292,6 +346,18 @@ export default function RedeemPage() {
                         </div>
                         <div className="text-sm text-gray-600 ml-6">
                           {item.info_two}
+                        </div>
+                      </div>
+                    )}
+
+                    {item.info_three && (
+                      <div className="space-y-1">
+                        <div className="flex items-center text-sm font-medium text-gray-700">
+                          <AlertCircle className="h-4 w-4 mr-2" />
+                          <span>Additional Info</span>
+                        </div>
+                        <div className="text-sm text-gray-600 ml-6">
+                          {item.info_three}
                         </div>
                       </div>
                     )}
@@ -330,7 +396,44 @@ export default function RedeemPage() {
                     <Gift className="h-8 w-8 text-green-600" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Create Redeem Request</h3>
-                  <p className="text-gray-600">This will use 1 credit from your available balance.</p>
+                  <p className="text-gray-600">Select the type of redeem you want to create.</p>
+                </div>
+
+                {/* Redeem Type Selection */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Redeem Type *
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setRedeemType('normal')}
+                      className={`p-4 border-2 rounded-xl font-medium transition-colors ${
+                        redeemType === 'normal'
+                          ? 'border-[#8c52ff] bg-[#8c52ff] text-white'
+                          : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="text-lg font-semibold mb-1">Normal</div>
+                        <div className="text-xs opacity-80">Uses available credits</div>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRedeemType('guest')}
+                      className={`p-4 border-2 rounded-xl font-medium transition-colors ${
+                        redeemType === 'guest'
+                          ? 'border-[#8c52ff] bg-[#8c52ff] text-white'
+                          : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="text-lg font-semibold mb-1">Guest</div>
+                        <div className="text-xs opacity-80">Uses gift credits</div>
+                      </div>
+                    </button>
+                  </div>
                 </div>
 
                 <div>
