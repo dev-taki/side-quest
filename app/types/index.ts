@@ -55,6 +55,7 @@ export interface UserSubscription {
   customer_id: string;
   cadence: string;
   available_credit: number;
+  gift_credit: number;
   subscription_amount: number;
 }
 

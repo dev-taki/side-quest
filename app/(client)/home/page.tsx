@@ -76,7 +76,7 @@ export default function HomePage() {
                           <Users className="h-4 w-4 text-green-600" />
                           <span className="text-sm font-medium text-green-800">Guest Credits</span>
                         </div>
-                        <div className="text-xl font-bold text-green-600 mt-1">{subscription.available_credit}</div>
+                        <div className="text-xl font-bold text-green-600 mt-1">{subscription.gift_credit}</div>
                       </div>
                     </div>
                   </div>
@@ -114,7 +114,7 @@ export default function HomePage() {
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
             <div className="text-2xl font-bold text-[#8c52ff] mb-1">
-              {userSubscriptions ? userSubscriptions.reduce((total, sub) => total + sub.available_credit, 0) : 0}
+              {userSubscriptions ? userSubscriptions.reduce((total, sub) => total + sub.available_credit + sub.gift_credit, 0) : 0}
             </div>
             <div className="text-xs text-gray-600">Total Credits</div>
           </div>
@@ -126,7 +126,7 @@ export default function HomePage() {
           </div>
           <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
             <div className="text-2xl font-bold text-green-600 mb-1">
-              {userSubscriptions ? userSubscriptions.reduce((total, sub) => total + sub.available_credit, 0) : 0}
+              {userSubscriptions ? userSubscriptions.reduce((total, sub) => total + sub.gift_credit, 0) : 0}
             </div>
             <div className="text-xs text-gray-600">Guest Credits</div>
           </div>
