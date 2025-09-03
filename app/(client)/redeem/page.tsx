@@ -56,6 +56,16 @@ export default function RedeemPage() {
     dispatch(fetchUserSubscriptions(BUSINESS_ID));
   }, [dispatch, router]);
 
+  // Clear redeem type selection when credits become 0
+  useEffect(() => {
+    if (redeemType === 'normal' && !canRedeemNormal()) {
+      setRedeemType(null);
+    }
+    if (redeemType === 'guest' && !canRedeemGuest()) {
+      setRedeemType(null);
+    }
+  }, [userSubscriptions, redeemType]);
+
   const fetchRedeemItems = async () => {
     try {
       setLoading(true);
@@ -106,10 +116,29 @@ export default function RedeemPage() {
     return getTotalCredits() > 0 || getTotalGiftCredits() > 0;
   };
 
+  const canRedeemNormal = () => {
+    return getTotalCredits() > 0;
+  };
+
+  const canRedeemGuest = () => {
+    return getTotalGiftCredits() > 0;
+  };
+
   const handleAddRedeem = async () => {
     
     if (!redeemType) {
       showToast.error('Please select a redeem type');
+      return;
+    }
+
+    // Check if the selected redeem type has available credits
+    if (redeemType === 'normal' && !canRedeemNormal()) {
+      showToast.error('You need available credits to create a normal redeem request');
+      return;
+    }
+
+    if (redeemType === 'guest' && !canRedeemGuest()) {
+      showToast.error('You need gift credits to create a guest redeem request');
       return;
     }
 
@@ -214,9 +243,14 @@ export default function RedeemPage() {
               {updatingCredits ? (
                 <div className="text-2xl font-bold text-[#3B3B3B] animate-pulse">...</div>
               ) : (
-                <div className="text-2xl font-bold text-[#3B3B3B]">{getTotalCredits()}</div>
+                <div className={`text-2xl font-bold ${getTotalCredits() === 0 ? 'text-red-500' : 'text-[#3B3B3B]'}`}>
+                  {getTotalCredits()}
+                </div>
               )}
               <div className="text-xs text-gray-500">credits</div>
+              {getTotalCredits() === 0 && (
+                <div className="text-xs text-red-500 mt-1">No credits available</div>
+              )}
             </div>
           </div>
 
@@ -234,9 +268,14 @@ export default function RedeemPage() {
               {updatingCredits ? (
                 <div className="text-2xl font-bold text-green-600 animate-pulse">...</div>
               ) : (
-                <div className="text-2xl font-bold text-green-600">{getTotalGiftCredits()}</div>
+                <div className={`text-2xl font-bold ${getTotalGiftCredits() === 0 ? 'text-red-500' : 'text-green-600'}`}>
+                  {getTotalGiftCredits()}
+                </div>
               )}
               <div className="text-xs text-gray-500">credits</div>
+              {getTotalGiftCredits() === 0 && (
+                <div className="text-xs text-red-500 mt-1">No gift credits available</div>
+              )}
             </div>
           </div>
         </div>
@@ -252,12 +291,20 @@ export default function RedeemPage() {
               New Redeem Request
             </button>
           ) : (
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
               <div className="flex items-center justify-center space-x-2 mb-2">
-                <AlertCircle className="h-5 w-5 text-gray-500" />
-                <span className="text-gray-700 font-medium">No Credits Available</span>
+                <AlertCircle className="h-5 w-5 text-red-500" />
+                <span className="text-red-700 font-medium">No Credits Available</span>
               </div>
-              <p className="text-sm text-gray-600">You need credits to create redeem requests</p>
+              <p className="text-sm text-red-600">You need credits to create redeem requests. Please check your subscription plans.</p>
+              <div className="mt-3 text-xs text-red-500 space-y-1">
+                {getTotalCredits() === 0 && (
+                  <div>• No available credits from subscriptions</div>
+                )}
+                {getTotalGiftCredits() === 0 && (
+                  <div>• No gift credits available</div>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -404,35 +451,73 @@ export default function RedeemPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Redeem Type *
                   </label>
+                  
+                  {/* Warning message when no credits are available */}
+                  {!canRedeem() && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-3">
+                      <div className="flex items-center space-x-2">
+                        <AlertCircle className="h-4 w-4 text-red-500" />
+                        <span className="text-sm text-red-700 font-medium">No credits available</span>
+                      </div>
+                      <p className="text-xs text-red-600 mt-1">You need credits to create redeem requests. Please check your subscription plans.</p>
+                    </div>
+                  )}
+                  
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setRedeemType('normal')}
+                      disabled={!canRedeemNormal()}
                       className={`p-4 border-2 rounded-xl font-medium transition-colors ${
                         redeemType === 'normal'
                           ? 'border-[#8c52ff] bg-[#8c52ff] text-white'
-                          : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                          : canRedeemNormal()
+                            ? 'border-gray-300 text-gray-700 hover:border-gray-400'
+                            : 'border-gray-200 text-gray-400 cursor-not-allowed'
                       }`}
                     >
                       <div className="text-center">
                         <div className="text-lg font-semibold mb-1">Normal</div>
-                        <div className="text-xs opacity-80">Uses available credits</div>
+                        <div className="text-xs opacity-80">
+                          {canRedeemNormal() ? 'Uses available credits' : 'No available credits'}
+                        </div>
                       </div>
                     </button>
                     <button
                       type="button"
                       onClick={() => setRedeemType('guest')}
+                      disabled={!canRedeemGuest()}
                       className={`p-4 border-2 rounded-xl font-medium transition-colors ${
                         redeemType === 'guest'
                           ? 'border-[#8c52ff] bg-[#8c52ff] text-white'
-                          : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                          : canRedeemGuest()
+                            ? 'border-gray-300 text-gray-700 hover:border-gray-400'
+                            : 'border-gray-200 text-gray-400 cursor-not-allowed'
                       }`}
                     >
                       <div className="text-center">
                         <div className="text-lg font-semibold mb-1">Guest</div>
-                        <div className="text-xs opacity-80">Uses gift credits</div>
+                        <div className="text-xs opacity-80">
+                          {canRedeemGuest() ? 'Uses gift credits' : 'No gift credits'}
+                        </div>
                       </div>
                     </button>
+                  </div>
+                  
+                  {/* Help text for redeem types */}
+                  <div className="text-xs text-gray-500 space-y-1">
+                    {!canRedeemNormal() && (
+                      <div className="flex items-center space-x-2">
+                        <AlertCircle className="h-3 w-3 text-red-500" />
+                        <span>Normal redeem requires available credits from your subscription</span>
+                      </div>
+                    )}
+                    {!canRedeemGuest() && (
+                      <div className="flex items-center space-x-2">
+                        <AlertCircle className="h-3 w-3 text-red-500" />
+                        <span>Guest redeem requires gift credits</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -473,7 +558,7 @@ export default function RedeemPage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || !redeemType || (redeemType === 'normal' && !canRedeemNormal()) || (redeemType === 'guest' && !canRedeemGuest())}
                     className="flex-1 bg-[#8c52ff] text-white py-3 px-4 rounded-xl font-medium hover:bg-[#7a47e6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   >
                     {submitting ? (
@@ -481,12 +566,17 @@ export default function RedeemPage() {
                         <ButtonLoader size="sm" />
                         Creating...
                       </>
-                    ) : (
-                      <>
-                        <Gift className="h-5 w-5 mr-2" />
-                        Create Redeem
-                      </>
-                    )}
+                      ) : !redeemType || (redeemType === 'normal' && !canRedeemNormal()) || (redeemType === 'guest' && !canRedeemGuest()) ? (
+                        <>
+                          <AlertCircle className="h-5 w-5 mr-2" />
+                          No Credits Available
+                        </>
+                      ) : (
+                        <>
+                          <Gift className="h-5 w-5 mr-2" />
+                          Create Redeem
+                        </>
+                      )}
                   </button>
                 </div>
               </form>
