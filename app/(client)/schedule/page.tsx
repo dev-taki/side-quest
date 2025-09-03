@@ -89,6 +89,56 @@ export default function SchedulePage() {
           </div>
         </div>
       </div>
+
+      {/* Fixed Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4 z-50">
+        <div className="flex justify-around items-center">
+          <button
+            onClick={() => router.push('/home')}
+            className="flex flex-col items-center space-y-1 text-gray-400"
+          >
+            <Home className="h-6 w-6 text-gray-400" />
+            <span className="text-xs font-medium">Home</span>
+          </button>
+
+          <button
+            onClick={() => router.push('/plans')}
+            className="flex flex-col items-center space-y-1 text-gray-400"
+          >
+            <Calendar className="h-6 w-6 text-gray-400" />
+            <span className="text-xs font-medium">Plans</span>
+          </button>
+
+          <button
+            onClick={() => router.push('/schedule')}
+            className="flex flex-col items-center space-y-1 text-[#8c52ff]"
+          >
+            <Clock className="h-6 w-6 text-[#8c52ff]" />
+            <span className="text-xs font-medium">Schedule</span>
+          </button>
+
+          <button
+            onClick={() => router.push('/redeem')}
+            className="flex flex-col items-center space-y-1 text-gray-400"
+          >
+            <Gift className="h-6 w-6 text-gray-400" />
+            <span className="text-xs font-medium">Redeem</span>
+          </button>
+
+          <button
+            onClick={() => {
+              // Check if user is admin and route accordingly
+              const isAdmin = user?.role === 'admin' || user?.role === 'super_admin' || user?.role === 'owner';
+              const profilePath = isAdmin ? '/admin/profile' : '/profile';
+              router.push(profilePath);
+            }}
+            className="flex flex-col items-center space-y-1 text-gray-400"
+          >
+            <User className="h-6 w-6 text-gray-400" />
+            <span className="text-xs font-medium">Profile</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
