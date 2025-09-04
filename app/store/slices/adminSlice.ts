@@ -82,7 +82,7 @@ export const getAllRedeemItems = createAsyncThunk(
 
 export const updateRedeemItem = createAsyncThunk(
   'admin/updateRedeemItem',
-  async (data: { business_id: string; order_id: string; info_one?: string; info_two?: string; info_three?: string; status?: string }, { rejectWithValue }) => {
+  async (data: { business_id: string; order_id: string; status?: string }, { rejectWithValue }) => {
     try {
       const result = await AdminService.updateRedeemItem(data.order_id, data);
       return result;

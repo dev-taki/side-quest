@@ -46,8 +46,6 @@ export interface AdminCardData {
 export interface AdminRedeemData {
   business_id: string;
   user_id: string;
-  info_one?: string;
-  info_two?: string;
   status?: string;
 }
 

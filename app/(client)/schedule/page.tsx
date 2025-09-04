@@ -5,10 +5,13 @@ import { Calendar, Home, Gift, User, Clock } from 'lucide-react';
 import { useAppSelector } from '../../store/hooks';
 import { useRouter } from 'next/navigation';
 import { AuthService } from '../../services/authService';
+import Image from 'next/image';
 
 export default function SchedulePage() {
   const router = useRouter();
   const { user } = useAppSelector((state) => state.auth);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [calendarUrl, setCalendarUrl] = useState<string | null>(null);
   const [appointmentLinks] = useState([
     {
       id: 1,
@@ -25,41 +28,16 @@ export default function SchedulePage() {
     }
   }, [router]);
 
-  // Render embedded calendars when appointment links change
+  // Set calendar URL when appointment links change
   useEffect(() => {
-    appointmentLinks.forEach((link) => {
-      const container = document.getElementById(`appointment-embed-${link.id}`);
-      if (container && link.object_id) {
-        // Clear previous content
-        container.innerHTML = '';
-        
-        // Extract domain from the script
-        const scriptMatch = link.object_id.match(/data-domain="([^"]+)"/);
-        if (scriptMatch) {
-          const domain = scriptMatch[1];
-          const iframeUrl = `https://${domain}.youcanbook.me?embed=true`;
-          
-          // Create iframe for direct embedding
-          const iframe = document.createElement('iframe');
-          iframe.src = iframeUrl;
-          iframe.className = 'w-full border-0 rounded-lg';
-          iframe.allow = 'payment';
-          iframe.title = 'Appointment Calendar';
-          iframe.style.minHeight = '500px';
-          iframe.style.height = '500px';
-          
-          container.appendChild(iframe);
-        } else {
-          // Fallback: show a message
-          container.innerHTML = `
-            <div class="text-center p-8">
-              <Calendar class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p class="text-gray-600">Calendar not available</p>
-            </div>
-          `;
-        }
+    if (appointmentLinks.length > 0 && appointmentLinks[0].object_id) {
+      const scriptMatch = appointmentLinks[0].object_id.match(/data-domain="([^"]+)"/);
+      if (scriptMatch) {
+        const domain = scriptMatch[1];
+        const iframeUrl = `https://${domain}.youcanbook.me?embed=true`;
+        setCalendarUrl(iframeUrl);
       }
-    });
+    }
   }, [appointmentLinks]);
 
   return (
@@ -77,16 +55,55 @@ export default function SchedulePage() {
           <p className="text-gray-600 text-sm">Manage your appointments and bookings</p>
         </div>
 
-        {/* Appointment Calendar Widget */}
+        {/* Wizard's Study Image or Calendar */}
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Book Your Appointment</h2>
-          <div id="appointment-embed-1" className="min-h-[500px]">
-            {/* Calendar iframe will be loaded here */}
-            <div className="text-center py-8">
-              <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">Loading calendar...</p>
+          {!showCalendar ? (
+            <div className="text-center">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Enter The Wizard's Study</h2>
+              <div 
+                className="cursor-pointer transition-transform hover:scale-105 duration-300"
+                onClick={() => setShowCalendar(true)}
+              >
+                <Image
+                  src="/the-wizards-study.jpg"
+                  alt="The Wizard's Study"
+                  width={600}
+                  height={400}
+                  className="rounded-lg shadow-lg mx-auto"
+                  priority
+                />
+                <p className="text-gray-600 mt-4 text-sm">Click to reveal the appointment calendar</p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">Book Your Appointment</h2>
+                <button
+                  onClick={() => setShowCalendar(false)}
+                  className="text-gray-500 hover:text-gray-700 text-sm underline"
+                >
+                  Back to Study
+                </button>
+              </div>
+              <div className="min-h-[500px]">
+                {calendarUrl ? (
+                  <iframe
+                    src={calendarUrl}
+                    className="w-full border-0 rounded-lg"
+                    allow="payment"
+                    title="Appointment Calendar"
+                    style={{ minHeight: '500px', height: '500px' }}
+                  />
+                ) : (
+                  <div className="text-center py-8">
+                    <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">Calendar not available</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

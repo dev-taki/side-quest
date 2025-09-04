@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Gift, Plus, MapPin, MessageSquare, Calendar, Clock, AlertCircle, User, Home } from 'lucide-react';
+import { Gift, Plus, Calendar, Clock, AlertCircle, User, Home } from 'lucide-react';
 
 import { RedeemService, RedeemItem, AddRedeemData } from '../../services/redeemService';
 import { AuthService } from '../../services/authService';
@@ -25,10 +25,7 @@ export default function RedeemPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    info_one: '',
-    info_two: ''
-  });
+
   const [redeemType, setRedeemType] = useState<'normal' | 'guest' | null>(null);
   const [updatingCredits, setUpdatingCredits] = useState(false);
 
@@ -152,9 +149,7 @@ export default function RedeemPage() {
     try {
       const redeemData: AddRedeemData = {
         business_id: BUSINESS_ID,
-        button_number: redeemType === 'normal' ? 1 : 2,
-        info_one: formData.info_one,
-        info_two: formData.info_two
+        button_number: redeemType === 'normal' ? 1 : 2
       };
 
       await RedeemService.addRedeem(redeemData);
@@ -162,10 +157,6 @@ export default function RedeemPage() {
       showToast.success('Redeem request created successfully!');
       
       // Reset form and refresh data
-      setFormData({
-        info_one: '',
-        info_two: ''
-      });
       setRedeemType(null);
       setShowAddForm(false);
       
@@ -370,46 +361,7 @@ export default function RedeemPage() {
                   </div>
                 </div>
 
-                {/* Delivery Information */}
-                {(item.info_one || item.info_two || item.info_three) && (
-                  <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
-                    {item.info_one && (
-                      <div className="space-y-1">
-                        <div className="flex items-center text-sm font-medium text-gray-700">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          <span>Delivery Address</span>
-                        </div>
-                        <div className="text-sm text-gray-600 ml-6">
-                          {item.info_one}
-                        </div>
-                      </div>
-                    )}
 
-                    {item.info_two && (
-                      <div className="space-y-1">
-                        <div className="flex items-center text-sm font-medium text-gray-700">
-                          <MessageSquare className="h-4 w-4 mr-2" />
-                          <span>Delivery Instructions</span>
-                        </div>
-                        <div className="text-sm text-gray-600 ml-6">
-                          {item.info_two}
-                        </div>
-                      </div>
-                    )}
-
-                    {item.info_three && (
-                      <div className="space-y-1">
-                        <div className="flex items-center text-sm font-medium text-gray-700">
-                          <AlertCircle className="h-4 w-4 mr-2" />
-                          <span>Additional Info</span>
-                        </div>
-                        <div className="text-sm text-gray-600 ml-6">
-                          {item.info_three}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
 
               </div>
             ))
@@ -521,32 +473,7 @@ export default function RedeemPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Delivery Address *
-                  </label>
-                  <textarea
-                    value={formData.info_one}
-                    onChange={(e) => setFormData({...formData, info_one: e.target.value})}
-                    required
-                    rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3B3B3B] focus:border-transparent"
-                    placeholder="Enter your delivery address"
-                  />
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Delivery Instructions
-                  </label>
-                  <textarea
-                    value={formData.info_two}
-                    onChange={(e) => setFormData({...formData, info_two: e.target.value})}
-                    rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3B3B3B] focus:border-transparent"
-                    placeholder="Any special delivery instructions (optional)"
-                  />
-                </div>
 
                 <div className="flex space-x-3 pt-4">
                   <button

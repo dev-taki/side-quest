@@ -10,16 +10,11 @@ export interface RedeemItem {
   order_id: string;
   user_id: string;
   plan_variation_name: string;
-  info_one?: string;
-  info_two?: string;
-  info_three?: string;
 }
 
 export interface AddRedeemData {
   business_id: string;
   button_number: number;
-  info_one?: string;
-  info_two?: string;
 }
 
 export interface RedeemResponse {
@@ -31,9 +26,6 @@ export interface RedeemResponse {
   order_id: string;
   user_id: string;
   plan_variation_name: string;
-  info_one?: string;
-  info_two?: string;
-  info_three?: string;
 }
 
 export class RedeemService {

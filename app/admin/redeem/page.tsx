@@ -19,8 +19,6 @@ interface RedemptionRequest {
   user_name: string;
   user_email: string;
   item_name: string;
-  info_one: string;
-  info_two: string;
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
@@ -215,8 +213,7 @@ export default function AdminRedeemPage() {
                       
                       <div>
                         <p className="text-gray-600 mb-1">Details</p>
-                        <p className="font-medium">{request.info_one}</p>
-                        {request.info_two && <p className="text-gray-500">{request.info_two}</p>}
+                        <p className="font-medium">-</p>
                       </div>
                       
                       <div>
